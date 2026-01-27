@@ -124,7 +124,7 @@ export default function AdminMessages() {
           .single()
 
         if (clientProfile) {
-          const newConv = {
+          const newConv: any = {
             id: 'new',
             client_id: clientProfile.id,
             subject: 'New Conversation',
