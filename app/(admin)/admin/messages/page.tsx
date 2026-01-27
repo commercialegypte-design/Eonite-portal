@@ -108,7 +108,7 @@ export default function AdminMessages() {
     }
 
     // logic handling
-    let finalConversations = data || []
+    let finalConversations: any[] = data || []
     let conversationToSelect = null
 
     if (clientIdParam) {
