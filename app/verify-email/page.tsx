@@ -26,22 +26,22 @@ export default function VerifyEmailPage() {
                         </svg>
                     </div>
                     <CardTitle className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        Vérifiez votre email
+                        {t('auth.verifyEmailTitle')}
                     </CardTitle>
                     <CardDescription className="text-base text-gray-500 dark:text-gray-400">
-                        Nous avons envoyé un lien de vérification à votre adresse email. Veuillez cliquer sur ce lien pour activer votre compte.
+                        {t('auth.verifyEmailDesc')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 pt-0 flex flex-col gap-4">
                     <div className="text-sm text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-xl border border-gray-100 dark:border-gray-800">
-                        <p>Si vous ne voyez pas l'email, vérifiez vos spams ou indésirables.</p>
+                        <p>{t('auth.checkSpam')}</p>
                     </div>
 
                     <Link href="/login" className="w-full">
                         <Button
                             className="w-full h-11 bg-eonite-green hover:bg-eonite-green-dark text-white rounded-xl shadow-md shadow-eonite-green/20 font-medium transition-all hover:scale-[1.01] active:scale-[0.99]"
                         >
-                            Retour à la connexion
+                            {t('auth.backToLogin')}
                         </Button>
                     </Link>
                 </CardContent>

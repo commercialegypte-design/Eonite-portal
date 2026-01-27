@@ -122,7 +122,7 @@ export default function LoginPage() {
 
             <div className="text-right">
               <Link href="/forgot-password" className="text-sm text-eonite-green hover:underline">
-                Mot de passe oublié ?
+                {t('auth.forgotPassword')}
               </Link>
             </div>
 

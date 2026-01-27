@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
         if (error) {
             setError(error.message)
         } else {
-            setMessage('Si un compte existe avec cet email, vous recevrez un lien de réinitialisation.')
+            setMessage(t('auth.resetLinkSent'))
         }
         setLoading(false)
     }
@@ -52,10 +52,10 @@ export default function ForgotPasswordPage() {
                         <img src="/logo.png" alt="EONITE" className="h-16 w-auto mx-auto" />
                     </div>
                     <CardTitle className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        Mot de passe oublié
+                        {t('auth.forgotPasswordTitle')}
                     </CardTitle>
                     <CardDescription className="text-base text-gray-500 dark:text-gray-400">
-                        Entrez votre email pour recevoir un lien de réinitialisation.
+                        {t('auth.forgotPasswordDesc')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 pt-0">
@@ -73,7 +73,7 @@ export default function ForgotPasswordPage() {
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Email</Label>
+                            <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t('auth.email')}</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -91,12 +91,12 @@ export default function ForgotPasswordPage() {
                             className="w-full h-11 bg-eonite-green hover:bg-eonite-green-dark text-white rounded-xl shadow-md shadow-eonite-green/20 font-medium transition-all hover:scale-[1.01] active:scale-[0.99] mt-2"
                             disabled={loading || !!message}
                         >
-                            {loading ? 'Envoi...' : 'Envoyer le lien'}
+                            {loading ? t('auth.sending') : t('auth.sendLink')}
                         </Button>
 
                         <div className="text-center text-sm text-muted-foreground">
                             <Link href="/login" className="text-eonite-green hover:underline font-semibold">
-                                Retour à la connexion
+                                {t('auth.backToLogin')}
                             </Link>
                         </div>
                     </form>

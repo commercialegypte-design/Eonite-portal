@@ -27,13 +27,13 @@ export default function UpdatePasswordPage() {
         setError('')
 
         if (password !== confirmPassword) {
-            setError('Les mots de passe ne correspondent pas')
+            setError(t('auth.passwordsDoNotMatch'))
             setLoading(false)
             return
         }
 
         if (password.length < 6) {
-            setError('Le mot de passe doit contenir au moins 6 caractères')
+            setError(t('auth.passwordTooShort'))
             setLoading(false)
             return
         }
@@ -68,10 +68,10 @@ export default function UpdatePasswordPage() {
                         <img src="/logo.png" alt="EONITE" className="h-16 w-auto mx-auto" />
                     </div>
                     <CardTitle className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-                        Nouveau mot de passe
+                        {t('auth.updatePasswordTitle')}
                     </CardTitle>
                     <CardDescription className="text-base text-gray-500 dark:text-gray-400">
-                        Entrez votre nouveau mot de passe.
+                        {t('auth.updatePasswordDesc')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="p-8 pt-0">
@@ -84,12 +84,12 @@ export default function UpdatePasswordPage() {
 
                         {success && (
                             <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-sm">
-                                Mot de passe mis à jour avec succès! Redirection...
+                                {t('auth.passwordUpdated')}
                             </div>
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Nouveau mot de passe</Label>
+                            <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t('auth.newPassword')}</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -103,7 +103,7 @@ export default function UpdatePasswordPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">Confirmer mot de passe</Label>
+                            <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-300 ml-1">{t('auth.confirmPassword')}</Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
@@ -121,7 +121,7 @@ export default function UpdatePasswordPage() {
                             className="w-full h-11 bg-eonite-green hover:bg-eonite-green-dark text-white rounded-xl shadow-md shadow-eonite-green/20 font-medium transition-all hover:scale-[1.01] active:scale-[0.99] mt-2"
                             disabled={loading || success}
                         >
-                            {loading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
+                            {loading ? t('auth.updating') : t('auth.updatePasswordBtn')}
                         </Button>
                     </form>
                 </CardContent>
