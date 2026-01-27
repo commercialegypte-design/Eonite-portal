@@ -121,7 +121,7 @@ export default function AdminMessages() {
           .from('profiles')
           .select('id, company_name, contact_name, email, role')
           .eq('id', clientIdParam)
-          .single()
+          .single<any>()
 
         if (clientProfile) {
           const newConv: any = {
