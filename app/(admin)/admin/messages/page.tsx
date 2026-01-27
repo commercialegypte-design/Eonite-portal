@@ -35,7 +35,7 @@ export default function AdminMessages() {
 
   useEffect(() => {
     checkAdminAndLoadConversations()
-  }, [])
+  }, [clientIdParam])
 
   useEffect(() => {
     if (selectedConversation) {
@@ -107,15 +107,45 @@ export default function AdminMessages() {
       console.error('Failed to load conversations:', error)
     }
 
-    setConversations(data || [])
+    // logic handling
+    let finalConversations = data || []
+    let conversationToSelect = null
 
     if (clientIdParam) {
-      const targetConv = data?.find((c: any) => c.client_id === clientIdParam)
+      const targetConv = finalConversations.find((c: any) => c.client_id === clientIdParam)
       if (targetConv) {
-        setSelectedConversation(targetConv)
+        conversationToSelect = targetConv
+      } else {
+        // Fetch client details to start new conversation
+        const { data: clientProfile } = await supabase
+          .from('profiles')
+          .select('id, company_name, contact_name, email, role')
+          .eq('id', clientIdParam)
+          .single()
+
+        if (clientProfile) {
+          const newConv = {
+            id: 'new',
+            client_id: clientProfile.id,
+            subject: 'New Conversation',
+            status: 'open',
+            unread_count: 0,
+            last_message_at: new Date().toISOString(),
+            profiles: clientProfile
+          }
+          finalConversations = [newConv, ...finalConversations]
+          conversationToSelect = newConv
+        }
       }
-    } else if (data && data.length > 0) {
-      setSelectedConversation(data[0])
+    }
+
+    if (!conversationToSelect && finalConversations.length > 0) {
+      conversationToSelect = finalConversations[0]
+    }
+
+    setConversations(finalConversations)
+    if (conversationToSelect) {
+      setSelectedConversation(conversationToSelect)
     }
 
     setLoading(false)
@@ -199,10 +229,39 @@ export default function AdminMessages() {
       setUploading(false)
     }
 
+    let conversationId = selectedConversation.id
+
+    // If new conversation, create it first
+    if (conversationId === 'new') {
+      const { data: newConvData, error: createError } = await (supabase
+        .from('conversations') as any)
+        .insert([{
+          client_id: selectedConversation.client_id,
+          subject: 'Support', // Default subject
+          status: 'open',
+          last_message_at: new Date().toISOString(),
+          unread_count: 0
+        }])
+        .select()
+        .single()
+
+      if (createError) {
+        console.error('Failed to create conversation:', createError)
+        setSending(false)
+        return
+      }
+
+      conversationId = newConvData.id
+      // Update selected conversation with real ID
+      const realConv = { ...selectedConversation, id: conversationId }
+      setSelectedConversation(realConv)
+      setConversations(prev => prev.map(c => c.id === 'new' ? realConv : c))
+    }
+
     const { error } = await (supabase
       .from('messages') as any)
       .insert([{
-        conversation_id: selectedConversation.id,
+        conversation_id: conversationId,
         sender_id: user.id,
         content: newMessage,
         attachment_url: attachmentUrl,
@@ -226,17 +285,12 @@ export default function AdminMessages() {
       .from('conversations') as any)
       .update({
         last_message_at: new Date().toISOString(),
-        // inc unread_count logic if needed, but not showing here
-        unread_count: selectedConversation.client_id !== user.id ? 999 : 0 // placeholder logic logic was slightly different?
-        // wait, original code:
-        // unread_count: selectedConversation.client_id === user.id ? 0 : 1 // Logic?
-        // Actually I should look at exact logic from file view but I can't view it right now easily inside replace logic.
-        // Based on lint error: Argument of type '{ last_message_at: string; unread_count: any; }' is not assignable to parameter of type 'never'.
+        unread_count: 1 // Increment/Set unread for client (since admin is sending)
       })
-      .eq('id', selectedConversation.id)
+      .eq('id', conversationId)
 
     // Manually reload messages (fallback if realtime doesn't work)
-    await loadMessages(selectedConversation.id)
+    await loadMessages(conversationId)
 
     setSending(false)
   }
