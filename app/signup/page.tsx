@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/lib/LanguageContext'
+import { getURL } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -57,6 +58,7 @@ export default function SignupPage() {
           contact_name: formData.contactName,
           phone: formData.phone,
         },
+        emailRedirectTo: getURL(),
       },
     })
 
@@ -77,7 +79,7 @@ export default function SignupPage() {
           .eq('id', user.id)
       }
 
-      router.push('/dashboard')
+      router.push('/verify-email')
       router.refresh()
     }
   }

@@ -120,6 +120,12 @@ export default function LoginPage() {
               />
             </div>
 
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-sm text-eonite-green hover:underline">
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
             <Button
               type="submit"
               className="w-full h-11 bg-eonite-green hover:bg-eonite-green-dark text-white rounded-xl shadow-md shadow-eonite-green/20 font-medium transition-all hover:scale-[1.01] active:scale-[0.99] mt-2"
