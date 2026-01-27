@@ -120,5 +120,11 @@ export function getURL() {
   url = url.includes('http') ? url : `https://${url}`
   // Make sure to include a trailing `/`.
   url = url.charAt(url.length - 1) === '/' ? url : `${url}/`
+
+  // Best practice for client-side: use window.location.origin if available
+  if (typeof window !== 'undefined') {
+    url = window.location.origin + '/'
+  }
+
   return url
 }
