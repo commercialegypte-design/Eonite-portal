@@ -8,6 +8,8 @@ import AdminLayout from '@/components/AdminLayout'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import DailyNotificationsWidget from '@/components/DailyNotificationsWidget'
+
 
 export const dynamic = 'force-dynamic'
 
@@ -209,55 +211,63 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Recent Orders */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-              <i className="fas fa-box text-eonite-green"></i>
-              {t('dashboard.recentOrders')}
-            </h3>
+        {/* Main Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Recent Orders */}
+          <div className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+                <i className="fas fa-box text-eonite-green"></i>
+                {t('dashboard.recentOrders')}
+              </h3>
+            </div>
+
+            {recentOrders.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <i className="fas fa-inbox text-5xl mb-4 text-gray-300"></i>
+                <p className="font-semibold">{t('dashboard.noOrders')}</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 dark:bg-gray-800 border-b-2 dark:border-gray-700">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.orderNumber')}</th>
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">Client</th>
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.date')}</th>
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.amount')}</th>
+                      <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y dark:divide-gray-700">
+                    {recentOrders.map(order => (
+                      <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                        <td className="px-6 py-4 font-mono text-sm font-bold dark:text-white">{order.order_number}</td>
+                        <td className="px-6 py-4 font-medium dark:text-gray-200">{order.profiles?.company_name || 'Client'}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{formatDate(order.created_at)}</td>
+                        <td className="px-6 py-4 font-bold text-green-600">{formatCurrency(order.total_ttc)}</td>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${order.status === 'paid' || order.status === 'delivered'
+                            ? 'bg-green-100 text-green-800'
+                            : order.status === 'production'
+                              ? 'bg-eonite-green/20 text-eonite-green-dark'
+                              : 'bg-gray-100 text-gray-800'
+                            }`}>
+                            {order.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
-          {recentOrders.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <i className="fas fa-inbox text-5xl mb-4 text-gray-300"></i>
-              <p className="font-semibold">{t('dashboard.noOrders')}</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-800 border-b-2 dark:border-gray-700">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.orderNumber')}</th>
-                    <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">Client</th>
-                    <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.date')}</th>
-                    <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">{t('dashboard.amount')}</th>
-                    <th className="px-6 py-4 text-left text-xs font-black text-gray-700 dark:text-gray-300 uppercase">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y dark:divide-gray-700">
-                  {recentOrders.map(order => (
-                    <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
-                      <td className="px-6 py-4 font-mono text-sm font-bold dark:text-white">{order.order_number}</td>
-                      <td className="px-6 py-4 font-medium dark:text-gray-200">{order.profiles?.company_name || 'Client'}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{formatDate(order.created_at)}</td>
-                      <td className="px-6 py-4 font-bold text-green-600">{formatCurrency(order.total_ttc)}</td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${order.status === 'paid' || order.status === 'delivered'
-                          ? 'bg-green-100 text-green-800'
-                          : order.status === 'production'
-                            ? 'bg-eonite-green/20 text-eonite-green-dark'
-                            : 'bg-gray-100 text-gray-800'
-                          }`}>
-                          {order.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          {/* Daily.co Notifications Widget */}
+          <div className="lg:col-span-1">
+            <DailyNotificationsWidget />
+          </div>
         </div>
 
         {/* Quick Actions */}
