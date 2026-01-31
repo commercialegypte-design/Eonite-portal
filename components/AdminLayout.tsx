@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/lib/LanguageContext'
 import LanguageToggle from '@/components/LanguageToggle'
 import ThemeToggle from '@/components/ThemeToggle'
+import DailyNotifications from '@/components/DailyNotifications'
+
 
 interface AdminLayoutProps {
   children: ReactNode
@@ -213,6 +215,7 @@ export default function AdminLayout({ children, disablePadding = false }: AdminL
               </p>
             </div>
             <div className="flex items-center gap-3">
+              <DailyNotifications />
               <ThemeToggle />
               <LanguageToggle />
             </div>
