@@ -147,9 +147,9 @@ export default function DailyNotifications() {
     }
 
     async function markAsRead(id: string) {
-        const { error } = await supabase
-            .from('daily_notifications')
-            .update({ is_read: true } as any)
+        const { error } = await (supabase
+            .from('daily_notifications') as any)
+            .update({ is_read: true })
             .eq('id', id)
 
         if (error) {
@@ -168,9 +168,9 @@ export default function DailyNotifications() {
 
         if (unreadIds.length === 0) return
 
-        const { error } = await supabase
-            .from('daily_notifications')
-            .update({ is_read: true } as any)
+        const { error } = await (supabase
+            .from('daily_notifications') as any)
+            .update({ is_read: true })
             .in('id', unreadIds)
 
         if (error) {
