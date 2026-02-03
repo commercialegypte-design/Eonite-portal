@@ -30,6 +30,7 @@ export default function ClientDashboard() {
   const [loadingItems, setLoadingItems] = useState(false)
   const [editingStockId, setEditingStockId] = useState<string | null>(null)
   const [editingStockValue, setEditingStockValue] = useState(0)
+  const [activeOffers, setActiveOffers] = useState<any[]>([])
 
   useEffect(() => {
     loadDashboardData()
@@ -106,13 +107,25 @@ export default function ClientDashboard() {
         loadOrderedProducts(),
         loadOrders(),
         loadNotifications(),
-        loadUnreadMessages(currentUser.id)
+        loadUnreadMessages(currentUser.id),
+        loadActiveOffers()
       ])
     } catch (error) {
       console.error('Error:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  async function loadActiveOffers() {
+    const { data } = await supabase
+      .from('offers')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(3)
+
+    if (data) setActiveOffers(data)
   }
 
   async function loadInventory() {
@@ -411,6 +424,56 @@ export default function ClientDashboard() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {/* Special Offers Section */}
+        {activeOffers.length > 0 && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <i className="fas fa-tags text-eonite-green"></i>
+                {t('offers.title') || 'Special Offers'}
+              </h2>
+              <Link href="/offers" className="text-sm font-semibold text-eonite-green hover:underline flex items-center gap-1">
+                {t('common.viewAll') || 'View All'}
+                <i className="fas fa-arrow-right text-xs"></i>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {activeOffers.map(offer => (
+                <Link href="/offers" key={offer.id} className="group block bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800">
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={offer.image_url}
+                      alt={offer.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {offer.discount_percent && (
+                      <div className="absolute top-3 left-3 bg-white/95 text-eonite-green font-bold text-xs px-2 py-1 rounded shadow-lg">
+                        {offer.discount_percent}% OFF
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900 dark:text-white mb-1 truncate group-hover:text-eonite-green transition-colors">
+                      {offer.title}
+                    </h3>
+                    <div className="flex items-center justify-between mt-2">
+                      {offer.discount_code && (
+                        <div className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded font-mono text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                          {offer.discount_code}
+                        </div>
+                      )}
+                      <span className="text-xs text-eonite-green font-medium">
+                        {t('common.limitedTime') || 'Limited Time'}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {criticalStockItems.length > 0 && (
           <Card className="mb-6 border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/30">

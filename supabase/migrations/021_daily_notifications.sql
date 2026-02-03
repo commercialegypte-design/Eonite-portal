@@ -2,7 +2,12 @@
 -- Stores webhook events from Daily.co (participant joined, meeting ended)
 
 -- Create notification type enum
-CREATE TYPE notification_type AS ENUM ('participant_joined', 'meeting_ended');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'notification_type') THEN
+        CREATE TYPE notification_type AS ENUM ('participant_joined', 'meeting_ended');
+    END IF;
+END$$;
 
 -- Create daily_notifications table
 CREATE TABLE IF NOT EXISTS daily_notifications (
@@ -58,3 +63,6 @@ CREATE POLICY "Admins can delete notifications" ON daily_notifications
       AND profiles.role IN ('admin', 'designer')
     )
   );
+
+-- CRITICAL: Enable Realtime for this table
+alter publication supabase_realtime add table daily_notifications;
